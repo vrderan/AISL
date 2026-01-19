@@ -4,7 +4,7 @@ import time
 import queue
 import traceback
 try:
-    from streamlit_webrtc import webrtc_streamer, WebRtcMode, VideoProcessorBase
+    from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
     HAS_WEBRTC = True
     from streamlit_autorefresh import st_autorefresh
 except ImportError:
@@ -457,6 +457,9 @@ def render_learning():
                     ctx = webrtc_streamer(
                         key=camera_key,
                         mode=WebRtcMode.SENDRECV,
+                        rtc_configuration={
+                            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+                        },
                         media_stream_constraints={
                             "video": {
                                 # "width": {"min": 640, "ideal": 640, "max": 640},

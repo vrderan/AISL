@@ -225,8 +225,10 @@ def render_fingerspelling():
                         },
                     media_stream_constraints={
                         "video": {
-                            "width": {"min": 640, "ideal": 640, "max": 640},
-                            "height": {"min": 480, "ideal": 480, "max": 480},
+                                # "width": {"min": 640, "ideal": 640, "max": 640},
+                                # "height": {"min": 480, "ideal": 480, "max": 480},
+                                "width": {"min": 480, "ideal": 480, "max": 480},
+                                "height": {"min": 360, "ideal": 360, "max": 360},
                             "frameRate": {"max": 30},
                         },
                         "audio": False
