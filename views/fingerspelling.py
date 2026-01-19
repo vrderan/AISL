@@ -190,13 +190,13 @@ def render_fingerspelling():
             # Manual Controls
             c_prev, c_next = st.columns(2)
             with c_prev:
-                if st.button(get_string("prev_letter", st.session_state.app_lang), width='stretch'):
+                if st.button(get_string("prev_letter", st.session_state.app_lang), use_container_width=True):
                     if st.session_state.fs_index > 0:
                         st.session_state.fs_index -= 1
                         st.rerun()
             with c_next:
                  # "Skip" button
-                 if st.button(get_string("next_letter", st.session_state.app_lang), width='stretch'):
+                 if st.button(get_string("next_letter", st.session_state.app_lang), use_container_width=True):
                     if st.session_state.fs_index < len(word):
                         st.session_state.fs_index += 1
                         if st.session_state.fs_index >= len(word):
@@ -205,7 +205,7 @@ def render_fingerspelling():
                         st.rerun()
             
             st.markdown("---")
-            if st.button("Stop / New Word", width='stretch'):
+            if st.button("Stop / New Word", use_container_width=True):
                 st.session_state.fs_active = False
                 st.rerun()
 
@@ -281,7 +281,7 @@ def render_fingerspelling():
             
             with st.container():
                 if found_img:
-                    st.image(found_img, width='stretch')
+                    st.image(found_img, use_container_width=True)
                     st.caption(f"How to sign: {current_target}")
                 else:
                     st.info(f"No instruction image found for '{current_target}'")

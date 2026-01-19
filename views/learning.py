@@ -256,7 +256,7 @@ def render_learning():
                 c_row_btn, c_row_menu = st.columns([0.85, 0.15])
                 with c_row_btn:
                      with stylable_container(key=cont_key, css_styles=row_css):
-                        if st.button(label, key=key, width='stretch'):
+                        if st.button(label, key=key, use_container_width=True):
                             st.session_state.current_sign = sign
                             print(f'{sign} button pressed')
                             st.rerun()
@@ -290,8 +290,8 @@ def render_learning():
                     popover_dynamic_key = f"pop_{key}_{st.session_state.popover_counter}"
                     
                     with stylable_container(key=popover_dynamic_key, css_styles=popover_css):
-                        with st.popover("⋮", width='stretch'):
-                            if st.button(get_string("feedback_fail_detect", st.session_state.app_lang), key=f"fb_fail_{key}", width='stretch'):
+                        with st.popover("⋮", use_container_width=True):
+                            if st.button(get_string("feedback_fail_detect", st.session_state.app_lang), key=f"fb_fail_{key}", use_container_width=True):
                                 st.session_state.popover_counter += 1
                                 try:
                                     idx = signs.index(sign)
@@ -308,7 +308,7 @@ def render_learning():
                                     st.rerun()
                                 except ValueError: pass
 
-                            if st.button(get_string("feedback_incorrect", st.session_state.app_lang), key=f"fb_inc_{key}", width='stretch'):
+                            if st.button(get_string("feedback_incorrect", st.session_state.app_lang), key=f"fb_inc_{key}", use_container_width=True):
                                 st.session_state.popover_counter += 1
                                 decrement_progress(target_lang, category, sign)
                                 st.session_state.feedback_message = {
@@ -319,7 +319,7 @@ def render_learning():
                                 print('feedback_incorrect button pressed')
                                 st.rerun()
 
-                            if st.button(get_string("feedback_flag", st.session_state.app_lang), key=f"fb_flag_{key}", width='stretch'):
+                            if st.button(get_string("feedback_flag", st.session_state.app_lang), key=f"fb_flag_{key}", use_container_width=True):
                                 st.session_state.popover_counter += 1
                                 toggle_flag(target_lang, category, sign)
                                 st.session_state.feedback_message = {
@@ -340,7 +340,7 @@ def render_learning():
                 del st.session_state.feedback_message
 
         # st.markdown("---")
-        # if st.button(get_string("simulate_success", st.session_state.app_lang), width='stretch'):
+        # if st.button(get_string("simulate_success", st.session_state.app_lang), use_container_width=True):
         #     st.session_state.last_success_sign = st.session_state.current_sign
         #     increment_progress(target_lang, category, st.session_state.current_sign)
         #     new_progress = get_progress(target_lang, category, st.session_state.current_sign)
@@ -459,10 +459,10 @@ def render_learning():
                         mode=WebRtcMode.SENDRECV,
                         media_stream_constraints={
                             "video": {
-                                "width": {"min": 640, "ideal": 640, "max": 640},
-                                "height": {"min": 480, "ideal": 480, "max": 480},
-                                # "width": {"min": 480, "ideal": 480, "max": 480},
-                                # "height": {"min": 360, "ideal": 360, "max": 360},
+                                # "width": {"min": 640, "ideal": 640, "max": 640},
+                                # "height": {"min": 480, "ideal": 480, "max": 480},
+                                "width": {"min": 480, "ideal": 480, "max": 480},
+                                "height": {"min": 360, "ideal": 360, "max": 360},
                                 "frameRate": {"max": 30},
                             },
                             "audio": False
@@ -553,7 +553,7 @@ def render_learning():
                     }
                 """
             ):
-                if st.button(btn_label, width='stretch'):
+                if st.button(btn_label, use_container_width=True):
                     st.session_state.show_instructions = not st.session_state.show_instructions
                     print('instructions button pressed')
                     st.rerun()
@@ -569,7 +569,7 @@ def render_learning():
                             #  local_img_path = f"signing_instructions/{st.session_state.current_sign}.png"
                             local_img_path = os.path.join("signing_instructions", f"{st.session_state.current_sign}.png")
                             if os.path.exists(local_img_path):
-                                st.image(local_img_path, width='stretch')
+                                st.image(local_img_path, use_container_width=True)
                             else:
                                 # st.info(f"No image available for {st.session_state.current_sign}. Please add '{st.session_state.current_sign}.png' to 'signing_instructions' folder.")
                                 st.info(f"No instructions available for '{current_sign}'.")
