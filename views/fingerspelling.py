@@ -4,7 +4,7 @@ import re
 import queue
 
 try:
-    from streamlit_webrtc import webrtc_streamer, WebRtcMode, VideoProcessorBase
+    from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
     HAS_WEBRTC = True
 except ImportError:
     HAS_WEBRTC = False
@@ -220,6 +220,9 @@ def render_fingerspelling():
                 ctx = webrtc_streamer(
                     key="fingerspelling_cam",
                     mode=WebRtcMode.SENDRECV,
+                    rtc_configuration={
+                            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+                        },
                     media_stream_constraints={
                         "video": {
                             "width": {"min": 640, "ideal": 640, "max": 640},
