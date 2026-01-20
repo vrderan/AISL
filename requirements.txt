@@ -1,14 +1,29 @@
-av
-joblib
-mediapipe==0.10.9
-numpy
-opencv-python-headless
-Pillow
-python-bidi
-scikit-learn==1.3.2
-streamlit==1.40.1
-streamlit_autorefresh
-streamlit_extras
-streamlit_webrtc
+# --- Core Environment ---
+python_version >= "3.10"
+
+# --- The "Golden Stack" (Do not change these versions) ---
+# These specific versions ensure MediaPipe works with Streamlit components
+mediapipe==0.10.14
+protobuf==4.25.3
+streamlit-extras==0.6.0
+
+# --- App Framework ---
+streamlit>=1.53.0
+streamlit-webrtc
+streamlit-autorefresh
+watchdog
+
+# --- AI & Processing ---
+# If you retrained your models recently, you can remove the version pin.
+scikit-learn>=1.7.0
 torch
-protobuf
+torchvision
+opencv-contrib-python
+numpy
+Pillow
+joblib
+
+# --- Utilities ---
+pandas
+python-bidi
+av
