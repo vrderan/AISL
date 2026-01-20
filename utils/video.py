@@ -436,7 +436,7 @@ if HAS_WEBRTC:
                             probas = self.model.predict_proba(feature_vector.reshape(1, -1))[0]
                         else:
                             # print(f"Buffer Check: {self.sequence_buffer[-1][0]}")
-                            input_tensor = torch.FloatTensor([self.sequence_buffer]).to('cpu') # or 'cuda'
+                            input_tensor = torch.FloatTensor(np.array([self.sequence_buffer])).to('cpu') # or 'cuda'
                             # Get Prediction
                             with torch.no_grad():
                                 # call the model (assumes model is the PyTorch class instance)

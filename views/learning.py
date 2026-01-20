@@ -14,7 +14,7 @@ except ImportError:
 from streamlit_extras.stylable_container import stylable_container
 from utils.localization import get_string
 from utils.state import navigate_to, navigate_back, get_progress, increment_progress, decrement_progress, toggle_flag
-from utils.data import get_category_signs, get_sign_display_name, get_sign_video_url, get_next_category
+from utils.data import get_category_signs, get_sign_display_name, get_sign_video_url#, get_next_category
 from utils.video import HandLandmarkProcessor
 from utils.model_loader import load_model
 
@@ -35,7 +35,7 @@ from utils.model_loader import load_model
         
 #         col1, col2 = st.columns(2)
 #         with col1:
-#             if st.button(f"Next: {next_cat}", type="primary", use_container_width=True):
+#             if st.button(f"Next: {next_cat}", type="primary", width='stretch'):
 #                 st.session_state.category = next_cat
 #                 st.session_state.current_sign = None 
                 
@@ -46,7 +46,7 @@ from utils.model_loader import load_model
 #                 st.session_state.show_mastery_modal = False
 #                 st.rerun()
 #         with col2:
-#             if st.button("Stay Here", use_container_width=True):
+#             if st.button("Stay Here", width='stretch'):
 #                 st.session_state.show_mastery_modal = False
 #                 st.rerun()
 
@@ -57,13 +57,13 @@ from utils.model_loader import load_model
         
 #         col1, col2 = st.columns(2)
 #         with col1:
-#             if st.button("Back to Menu", type="primary", use_container_width=True):
+#             if st.button("Back to Menu", type="primary", width='stretch'):
 #                 st.session_state.page = "language_selection"
 #                 st.session_state.category = None
 #                 st.session_state.show_mastery_modal = False
 #                 st.rerun()
 #         with col2:
-#             if st.button("Keep Practicing", use_container_width=True):
+#             if st.button("Keep Practicing", width='stretch'):
 #                 st.session_state.show_mastery_modal = False
 #                 st.rerun()
 
@@ -308,7 +308,7 @@ def render_learning():
                 c_row_btn, c_row_menu = st.columns([0.85, 0.15])
                 with c_row_btn:
                      with stylable_container(key=cont_key, css_styles=row_css):
-                        if st.button(label, key=key, use_container_width=True):
+                        if st.button(label, key=key, width='stretch'):
                             st.session_state.current_sign = sign
                             print(f'{sign} button pressed')
                             st.rerun()
@@ -342,8 +342,8 @@ def render_learning():
                     popover_dynamic_key = f"pop_{key}_{st.session_state.popover_counter}"
                     
                     with stylable_container(key=popover_dynamic_key, css_styles=popover_css):
-                        with st.popover("⋮", use_container_width=True):
-                            if st.button(get_string("feedback_fail_detect", st.session_state.app_lang), key=f"fb_fail_{key}", use_container_width=True):
+                        with st.popover("⋮", width='stretch'):
+                            if st.button(get_string("feedback_fail_detect", st.session_state.app_lang), key=f"fb_fail_{key}", width='stretch'):
                                 st.session_state.popover_counter += 1
                                 try:
                                     idx = signs.index(sign)
@@ -360,7 +360,7 @@ def render_learning():
                                     st.rerun()
                                 except ValueError: pass
 
-                            if st.button(get_string("feedback_incorrect", st.session_state.app_lang), key=f"fb_inc_{key}", use_container_width=True):
+                            if st.button(get_string("feedback_incorrect", st.session_state.app_lang), key=f"fb_inc_{key}", width='stretch'):
                                 st.session_state.popover_counter += 1
                                 decrement_progress(target_lang, category, sign)
                                 st.session_state.feedback_message = {
@@ -371,7 +371,7 @@ def render_learning():
                                 print('feedback_incorrect button pressed')
                                 st.rerun()
 
-                            if st.button(get_string("feedback_flag", st.session_state.app_lang), key=f"fb_flag_{key}", use_container_width=True):
+                            if st.button(get_string("feedback_flag", st.session_state.app_lang), key=f"fb_flag_{key}", width='stretch'):
                                 st.session_state.popover_counter += 1
                                 toggle_flag(target_lang, category, sign)
                                 st.session_state.feedback_message = {
@@ -392,7 +392,7 @@ def render_learning():
                 del st.session_state.feedback_message
 
         # st.markdown("---")
-        # if st.button(get_string("simulate_success", st.session_state.app_lang), use_container_width=True):
+        # if st.button(get_string("simulate_success", st.session_state.app_lang), width='stretch'):
         #     st.session_state.last_success_sign = st.session_state.current_sign
         #     increment_progress(target_lang, category, st.session_state.current_sign)
         #     new_progress = get_progress(target_lang, category, st.session_state.current_sign)
@@ -609,7 +609,7 @@ def render_learning():
                     }
                 """
             ):
-                if st.button(btn_label, use_container_width=True):
+                if st.button(btn_label, width='stretch'):
                     st.session_state.show_instructions = not st.session_state.show_instructions
                     print('instructions button pressed')
                     st.rerun()
@@ -625,7 +625,7 @@ def render_learning():
                             #  local_img_path = f"signing_instructions/{st.session_state.current_sign}.png"
                             local_img_path = os.path.join("signing_instructions", f"{st.session_state.current_sign}.png")
                             if os.path.exists(local_img_path):
-                                st.image(local_img_path, use_container_width=True)
+                                st.image(local_img_path, width='stretch')
                             else:
                                 # st.info(f"No image available for {st.session_state.current_sign}. Please add '{st.session_state.current_sign}.png' to 'signing_instructions' folder.")
                                 st.info(f"No instructions available for '{current_sign}'.")
