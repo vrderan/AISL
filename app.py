@@ -1,6 +1,10 @@
 import streamlit as st
 from utils.state import init_state
 from utils.styling import load_css
+import warnings
+
+# Suppress the specific Protobuf warning
+warnings.filterwarnings("ignore", category=UserWarning, module="google.protobuf.symbol_database")
 
 # Page Config must be the first Streamlit command
 st.set_page_config(layout="wide", page_title="AI-SL")
