@@ -45,6 +45,22 @@ SIGN_VIDEOS = {
     "אהבה": ("https://youtu.be/n6wR5ZMfMgs?si=nJ0j8rcNON0jXX1M", 0),
 }
 
+# # Define the learning path order (Excluding fingerspelling)
+# LEARNING_PATH = ["ABC", "Basics", "Greetings", "Animals"]
+
+# def get_next_category(current_category):
+#     """
+#     Returns the next category ID, or None if this is the last one.
+#     """
+#     if current_category not in LEARNING_PATH:
+#         print(f"⚠️ Warning: '{current_category}' not found in LEARNING_PATH: {LEARNING_PATH}")
+#         return None
+    
+#     idx = LEARNING_PATH.index(current_category)
+#     if idx + 1 < len(LEARNING_PATH):
+#         return LEARNING_PATH[idx + 1]
+#     return None # Finished all categories
+
 def get_category_signs(category, target_lang):
     if category == "ABC":
         if target_lang == "ISL":

@@ -9,6 +9,7 @@ import platform
 import random
 from bidi.algorithm import get_display
 import torch
+import math
 
 try:
     import mediapipe as mp
@@ -370,7 +371,7 @@ if HAS_WEBRTC:
             #     print(f"Video FPS: {fps:.2f}")
             
             if self.target_sign != self.previous_target_sign:
-                # print(f'Target sign changed to: {self.target_sign}')
+                print(f'Target sign changed to: {self.target_sign}')
                 self.previous_target_sign = self.target_sign
                 self.first_match_time = None
             
@@ -396,10 +397,21 @@ if HAS_WEBRTC:
             
                 # Skip prediction during cooldown
                 if self.in_cooldown:
-                    if time.time() - self.last_success_time >= self.success_cooldown:
+                    elapsed = time.time() - self.last_success_time
+                    if elapsed >= self.success_cooldown:
                         self.in_cooldown = False
                     else:
+                        # Add success maeesage
                         img = self.draw_modern_text(img, self.success_msg, y_pos=40, font_size=50, color=(0, 255, 0)) # Centered, Large, Green
+                        if self.success_cooldown > 1:
+                            # Calculate remaining seconds
+                            time_left = math.ceil(self.success_cooldown - elapsed)
+                            # Create countdown text
+                            countdown_text = f"Try again in {time_left}..."
+                            # Draw small orange text at the bottom
+                            # Get image height to position text at the bottom
+                            h, w = img.shape[:2]
+                            img = self.draw_modern_text(img, countdown_text, y_pos=h - 40, font_size=25, color=(255, 180, 0))
                 
                 # LSTM SLIDING WINDOW LOGIC
                 if self.category != 'ABC':
@@ -418,8 +430,8 @@ if HAS_WEBRTC:
                                                        )
                             
                     # Prediction logic
-                    if self.model and (self.category == 'ABC' or len(self.sequence_buffer) == self.sequence_length):
-                        
+                    if not self.in_cooldown and self.model and (self.category == 'ABC' or len(self.sequence_buffer) == self.sequence_length):
+                        # print(f"Category: {self.category}")
                         if self.category == 'ABC':
                             probas = self.model.predict_proba(feature_vector.reshape(1, -1))[0]
                         else:
@@ -470,7 +482,7 @@ if HAS_WEBRTC:
                                 if not self.reset_hand:
                                     # cv2.putText(img, "Reset Hand", (10, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 125, 255), 3, cv2.LINE_AA)
                                     if not self.in_cooldown:
-                                        img = self.draw_modern_text(img, self.reset_msg, y_pos=40, font_size=40, color=(0, 200, 255)) # light blue
+                                        img = self.draw_modern_text(img, self.reset_msg, y_pos=40, font_size=40, color=(255, 180, 0)) # light blue
                                     
                                 elif self.first_match_time is None:
                                     self.first_match_time = time.time()

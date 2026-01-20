@@ -14,9 +14,58 @@ except ImportError:
 from streamlit_extras.stylable_container import stylable_container
 from utils.localization import get_string
 from utils.state import navigate_to, navigate_back, get_progress, increment_progress, decrement_progress, toggle_flag
-from utils.data import get_category_signs, get_sign_display_name, get_sign_video_url
+from utils.data import get_category_signs, get_sign_display_name, get_sign_video_url, get_next_category
 from utils.video import HandLandmarkProcessor
 from utils.model_loader import load_model
+
+# @st.dialog("🎉 Category Mastered!")
+# def show_mastery_modal(category, target_lang):
+#     print('showing mastery modal')
+#     # Only fire once per modal opening
+#     if not st.session_state.get("modal_balloons_fired", False):
+#         st.balloons()
+#         st.session_state.modal_balloons_fired = True
+    
+#     next_cat = get_next_category(category)
+    
+#     # CASE 1: Next Category Available
+#     if next_cat:
+#         st.write(f"Amazing job! You have mastered all signs in **{category}**.")
+#         st.write("Ready for the next challenge?")
+        
+#         col1, col2 = st.columns(2)
+#         with col1:
+#             if st.button(f"Next: {next_cat}", type="primary", use_container_width=True):
+#                 st.session_state.category = next_cat
+#                 st.session_state.current_sign = None 
+                
+#                 # NUCLEAR OPTION: Force video player to destroy and rebuild
+#                 if "video_key_id" not in st.session_state: st.session_state.video_key_id = 0
+#                 st.session_state.video_key_id += 1 
+                
+#                 st.session_state.show_mastery_modal = False
+#                 st.rerun()
+#         with col2:
+#             if st.button("Stay Here", use_container_width=True):
+#                 st.session_state.show_mastery_modal = False
+#                 st.rerun()
+
+#     # CASE 2: End of Course
+#     else:
+#         st.success(f"🏆 CONGRATULATIONS! You have mastered all available **{target_lang}** signs!")
+#         st.write("You are a legend. What would you like to do?")
+        
+#         col1, col2 = st.columns(2)
+#         with col1:
+#             if st.button("Back to Menu", type="primary", use_container_width=True):
+#                 st.session_state.page = "language_selection"
+#                 st.session_state.category = None
+#                 st.session_state.show_mastery_modal = False
+#                 st.rerun()
+#         with col2:
+#             if st.button("Keep Practicing", use_container_width=True):
+#                 st.session_state.show_mastery_modal = False
+#                 st.rerun()
 
 def render_learning():
     if "popover_counter" not in st.session_state:
@@ -25,9 +74,7 @@ def render_learning():
         st.session_state.pulse_id = 0
     if "result_queue" not in st.session_state:
         st.session_state.result_queue = queue.Queue()
-    if "has_celebrated" not in st.session_state:
-        st.session_state.has_celebrated = False
-
+    
     st.markdown("""
         <style>
         @keyframes flash-green-border {
@@ -75,6 +122,10 @@ def render_learning():
         </style>
     """, unsafe_allow_html=True)
 
+    # # If the flag is True, Streamlit halts and overlays the dialog.
+    # if st.session_state.get("show_mastery_modal", False):
+    #     show_mastery_modal(st.session_state.category, st.session_state.target_lang)
+    
     with stylable_container(
         key="back_btn_container",
         css_styles="""
@@ -143,7 +194,8 @@ def render_learning():
                 language=target_lang,
                 translate_landmarks=True if category=='ABC' else False,
                 scale_landmarks=True if category=='ABC' else False,
-                hold_sign_duration = 1 if category=='ABC' else 0,
+                hold_sign_duration = 1 if category=='ABC' else 0.33,
+                success_cooldown = 2 if category=='ABC' else 3,
             )
         except Exception as e:
             print(f"CRITICAL VIDEO ERROR: {e}", flush=True)
@@ -457,21 +509,22 @@ def render_learning():
                     ctx = webrtc_streamer(
                         key=camera_key,
                         mode=WebRtcMode.SENDRECV,
-                        rtc_configuration={
-                            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-                        },
+                        # rtc_configuration={
+                        #     "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+                        # },
                         media_stream_constraints={
                             "video": {
-                                # "width": {"min": 640, "ideal": 640, "max": 640},
-                                # "height": {"min": 480, "ideal": 480, "max": 480},
-                                "width": {"min": 480, "ideal": 480, "max": 480},
-                                "height": {"min": 360, "ideal": 360, "max": 360},
+                                "width": {"min": 640, "ideal": 640, "max": 640},
+                                "height": {"min": 480, "ideal": 480, "max": 480},
+                                # "width": {"min": 480, "ideal": 480, "max": 480},
+                                # "height": {"min": 360, "ideal": 360, "max": 360},
                                 "frameRate": {"max": 30},
                             },
                             "audio": False
                         },
                         video_processor_factory=processor_factory,
                         async_processing=True,
+                        desired_playing_state=True,
                         video_html_attrs={
                             "style": {"width": "100%", "border-radius": "10px"}, 
                             "controls": False, 
@@ -632,6 +685,15 @@ def render_learning():
     # The rest of the app does NOT rerun, so buttons remain clickable!
     @st.fragment(run_every=0.2)
     def check_for_success():
+        # 1. ZOMBIE CHECK (Page Navigation)
+        if st.session_state.page != "learning":
+            return
+            
+        # 2. MODAL CHECK (Stop processing if modal is open)
+        # This fixes the infinite loop/balloon spam
+        if st.session_state.get("show_mastery_modal", False):
+            return
+        
         try:            
             # Check the queue without blocking
             if not hasattr(st.session_state, "result_queue"):
@@ -642,14 +704,14 @@ def render_learning():
             if msg == "success":
                 # --- SUCCESS LOGIC (Only runs when success actually happens) ---
                 
-                # 1. Update Session State
+                # Update Session State
                 st.session_state.last_success_sign = st.session_state.current_sign
                 increment_progress(target_lang, category, st.session_state.current_sign)
                 
                 st.session_state.flash_time = time.time()
                 st.session_state.pulse_id += 1
                 
-                # 2. Check for Level Completion / Next Sign
+                # Check for Level Completion / Next Sign
                 new_progress = get_progress(target_lang, category, st.session_state.current_sign)
                 
                 if new_progress >= 3:
@@ -672,23 +734,33 @@ def render_learning():
                         "text": get_string("success_msg", st.session_state.app_lang)
                     }
                 
-                # 3. Update the Live Processor (Hot Swap)
+                # Update the Live Processor (Hot Swap)
                 # We need to reach into the global 'ctx' variable
                 if ctx and ctx.video_processor:
                     ctx.video_processor.target_sign = st.session_state.current_sign
 
                 # Check if every single sign in the list is now mastered (>= 3)
-                print(f'signs: {signs}')
+                # print(f'signs: {signs}')
                 all_mastered = all(get_progress(target_lang, category, s) >= 3 for s in signs)
+                
+                # # Check if we already celebrated this specific category to avoid spam
+                # celebration_key = f"celebrated_{target_lang}_{category}"
+                # already_celebrated = st.session_state.get(celebration_key, False)
+                # print(f'already_celebrated: {already_celebrated}')
+                # if all_mastered and not already_celebrated:
+                #     print("Category Mastered!")
+                #     st.session_state.show_mastery_modal = True
+                #     st.session_state[celebration_key] = True
+                
+                # Check if we already celebrated this specific category to avoid spam
                 if all_mastered:
                     print("Category Mastered!")
-                    st.session_state.has_celebrated = True # Stop future loops
                     st.balloons()
                     st.toast(f"🎉 CONGRATULATIONS! You have mastered the '{category}' category!")
                     # PAUSE HERE: Let the balloons fly for 3 seconds before reloading
                     time.sleep(2)
                 
-                # 4. Trigger FULL App Rerun
+                # Trigger FULL App Rerun
                 # We only do this ONCE upon success, so the UI updates to show the new sign
                 st.rerun()
 

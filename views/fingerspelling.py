@@ -123,8 +123,10 @@ def render_fingerspelling():
                 model=model,
                 result_queue=current_queue,
                 target_sign=model_target,
+                category=category,
                 language=target_lang,
                 hold_sign_duration=0.3,
+                success_cooldown=0.5,
             )
         except Exception as e:
             print(f"FS Processor Error: {e}", flush=True)
@@ -220,21 +222,22 @@ def render_fingerspelling():
                 ctx = webrtc_streamer(
                     key="fingerspelling_cam",
                     mode=WebRtcMode.SENDRECV,
-                    rtc_configuration={
-                            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-                        },
+                    # rtc_configuration={
+                    #         "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+                    #     },
                     media_stream_constraints={
                         "video": {
-                                # "width": {"min": 640, "ideal": 640, "max": 640},
-                                # "height": {"min": 480, "ideal": 480, "max": 480},
-                                "width": {"min": 480, "ideal": 480, "max": 480},
-                                "height": {"min": 360, "ideal": 360, "max": 360},
+                                "width": {"min": 640, "ideal": 640, "max": 640},
+                                "height": {"min": 480, "ideal": 480, "max": 480},
+                                # "width": {"min": 480, "ideal": 480, "max": 480},
+                                # "height": {"min": 360, "ideal": 360, "max": 360},
                             "frameRate": {"max": 30},
                         },
                         "audio": False
                     },
                     video_processor_factory=processor_factory,
                     async_processing=True,
+                    desired_playing_state=True,
                     video_html_attrs={
                         "style": {"width": "100%", "border-radius": "10px"}, 
                         "controls": False, 
