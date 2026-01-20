@@ -54,7 +54,7 @@ Once your environment is active (and showing aisl_app or venv in the terminal), 
 pip install -r requirements.txt
 ```
 
-▶️ How to Run
+### ▶️ How to Run
 Launch the application using Streamlit:
 
 ```bash
@@ -64,9 +64,7 @@ streamlit run app.py
 ### 📂 Project Structure
 * app.py: The main entry point.
 * views/: Contains the UI logic for Learning and Practice pages.
-* utils/: Helper functions for video processing, state management, and data.
-* models/: Contains the trained .pkl or .joblib scikit-learn models.
-* signing_instructions/: Images/Icons for specific signs.
+* utils/: Helper functions for video processing, state management, and data. Also contains the trained models and some of the signing instructions.
 
 ### ⚠️ Troubleshooting
 **"AttributeError: module 'mediapipe' has no attribute 'solutions'"** This usually happens if a newer version of protobuf was installed automatically. Fix: Run this command to force the compatible versions:
