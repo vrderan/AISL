@@ -14,58 +14,61 @@ except ImportError:
 from streamlit_extras.stylable_container import stylable_container
 from utils.localization import get_string
 from utils.state import navigate_to, navigate_back, get_progress, increment_progress, decrement_progress, toggle_flag
-from utils.data import get_category_signs, get_sign_display_name, get_sign_video_url#, get_next_category
+from utils.data import get_category_signs, get_sign_display_name, get_sign_video_url, get_next_category
 from utils.video import HandLandmarkProcessor
 from utils.model_loader import load_model
 
-# @st.dialog("🎉 Category Mastered!")
-# def show_mastery_modal(category, target_lang):
-#     print('showing mastery modal')
-#     # Only fire once per modal opening
-#     if not st.session_state.get("modal_balloons_fired", False):
-#         st.balloons()
-#         st.session_state.modal_balloons_fired = True
+@st.dialog("🎉 Category Mastered!")
+def show_mastery_modal(category, target_lang):
+    # Only fire balloons once per modal opening
+    if not st.session_state.get("modal_balloons_fired", False):
+        st.balloons()
+        st.session_state.modal_balloons_fired = True
     
-#     next_cat = get_next_category(category)
+    next_cat = get_next_category(category, target_lang)
     
-#     # CASE 1: Next Category Available
-#     if next_cat:
-#         st.write(f"Amazing job! You have mastered all signs in **{category}**.")
-#         st.write("Ready for the next challenge?")
+    # CASE 1: Next Category Available
+    if next_cat:
+        st.write(f"Amazing job! You have mastered all signs in **{target_lang} {category}**.")
+        st.write("Ready for the next challenge?")
         
-#         col1, col2 = st.columns(2)
-#         with col1:
-#             if st.button(f"Next: {next_cat}", type="primary", width='stretch'):
-#                 st.session_state.category = next_cat
-#                 st.session_state.current_sign = None 
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(f"Next: {target_lang} {next_cat}", type="primary", width='stretch'):
+                st.session_state.category = next_cat
+                st.session_state.current_sign = None 
                 
-#                 # NUCLEAR OPTION: Force video player to destroy and rebuild
-#                 if "video_key_id" not in st.session_state: st.session_state.video_key_id = 0
-#                 st.session_state.video_key_id += 1 
+                # Force video player rebuild
+                if "video_key_id" not in st.session_state: st.session_state.video_key_id = 0
+                st.session_state.video_key_id += 1 
                 
-#                 st.session_state.show_mastery_modal = False
-#                 st.rerun()
-#         with col2:
-#             if st.button("Stay Here", width='stretch'):
-#                 st.session_state.show_mastery_modal = False
-#                 st.rerun()
+                st.session_state.show_mastery_modal = False
+                st.session_state.modal_balloons_fired = False # Reset for next time
+                st.rerun()
+        with col2:
+            if st.button("Stay Here", width='stretch'):
+                st.session_state.show_mastery_modal = False
+                st.session_state.modal_balloons_fired = False
+                st.rerun()
 
-#     # CASE 2: End of Course
-#     else:
-#         st.success(f"🏆 CONGRATULATIONS! You have mastered all available **{target_lang}** signs!")
-#         st.write("You are a legend. What would you like to do?")
+    # CASE 2: End of Course
+    else:
+        st.success(f"🏆 CONGRATULATIONS! You have mastered all available **{target_lang}** signs!")
+        st.write("You are a legend. What would you like to do?")
         
-#         col1, col2 = st.columns(2)
-#         with col1:
-#             if st.button("Back to Menu", type="primary", width='stretch'):
-#                 st.session_state.page = "language_selection"
-#                 st.session_state.category = None
-#                 st.session_state.show_mastery_modal = False
-#                 st.rerun()
-#         with col2:
-#             if st.button("Keep Practicing", width='stretch'):
-#                 st.session_state.show_mastery_modal = False
-#                 st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Back to Menu", type="primary", width='stretch'):
+                st.session_state.page = "language_selection"
+                st.session_state.category = None
+                st.session_state.show_mastery_modal = False
+                st.session_state.modal_balloons_fired = False
+                st.rerun()
+        with col2:
+            if st.button("Keep Practicing", width='stretch'):
+                st.session_state.show_mastery_modal = False
+                st.session_state.modal_balloons_fired = False
+                st.rerun()
 
 def render_learning():
     if "popover_counter" not in st.session_state:
@@ -112,6 +115,10 @@ def render_learning():
         </style>
     """, unsafe_allow_html=True)
 
+    # Check if the modal flag is set
+    if st.session_state.get("show_mastery_modal", False):
+        show_mastery_modal(st.session_state.category, st.session_state.target_lang)
+    
     with stylable_container(
         key="back_btn_container",
         css_styles="""
@@ -173,7 +180,7 @@ def render_learning():
                 translate_landmarks=True if category=='ABC' else False,
                 scale_landmarks=True if category=='ABC' else False,
                 hold_sign_duration = 1 if category=='ABC' else 0.1,
-                success_cooldown = 2 if category=='ABC' else 3,
+                success_cooldown = 2 if category=='ABC' else 2,
             )
         except Exception as e:
             print(f"CRITICAL VIDEO ERROR: {e}", flush=True)
@@ -207,11 +214,9 @@ def render_learning():
                 should_flash = (sign == last_success)
                 
                 # --- KEY GENERATION ---
-                # Remove spaces and special chars to ensure valid CSS class names
-                # e.g. "Thank You" -> "ThankYou"
-                safe_sign_key = "".join(c for c in sign if c.isalnum())
-                # Base key for the container
-                container_key = f"cont_btn_{i}_{safe_sign_key}"
+                # We use the INDEX (i) for the container key. 
+                # This avoids all issues with Hebrew/Special characters in CSS class names.
+                container_key = f"cont_btn_row_{i}"
                 if should_flash:
                     # Append counter to force DOM rebuild
                     container_key += f"_{flash_counter}"
@@ -246,7 +251,7 @@ def render_learning():
                 
                 with c_row_btn:
                     with st.container(key=container_key):
-                        if st.button(label, key=key, use_container_width=True):
+                        if st.button(label, key=key, width='stretch'):
                             st.session_state.current_sign = sign
                             st.rerun()
 
@@ -562,11 +567,30 @@ def render_learning():
                 if ctx and ctx.video_processor:
                     ctx.video_processor.target_sign = st.session_state.current_sign
 
+                # Check if every single sign in the list is now mastered (>= 3)
                 all_mastered = all(get_progress(target_lang, category, s) >= 3 for s in signs)
-                if all_mastered:
-                    st.balloons()
+                
+                # We use a specific key to ensure we don't re-trigger this if they choose "Stay Here"
+                # The 'celebrated' flag resets only when category changes.
+                celebration_key = f"celebrated_{target_lang}_{category}"
+                already_celebrated = st.session_state.get(celebration_key, False)
+
+                if all_mastered and not already_celebrated:
+                    # 1. Mark as celebrated so we don't loop
+                    st.session_state[celebration_key] = True
+                    
+                    # 2. Trigger the modal flag
+                    st.session_state.show_mastery_modal = True
+                    
+                    # 3. Optional: Initial Celebration before modal opens
                     st.toast(f"🎉 CONGRATULATIONS! You have mastered the '{category}' category!")
-                    time.sleep(2)
+                    time.sleep(1.0) # Short pause before the reruns opens the modal
+                
+                # all_mastered = all(get_progress(target_lang, category, s) >= 3 for s in signs)
+                # if all_mastered:
+                #     st.balloons()
+                #     st.toast(f"🎉 CONGRATULATIONS! You have mastered the '{category}' category!")
+                #     time.sleep(2)
                 
                 st.rerun()
 

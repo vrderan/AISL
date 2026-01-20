@@ -45,21 +45,47 @@ SIGN_VIDEOS = {
     "אהבה": ("https://youtu.be/n6wR5ZMfMgs?si=nJ0j8rcNON0jXX1M", 0),
 }
 
-# # Define the learning path order (Excluding fingerspelling)
-# LEARNING_PATH = ["ABC", "Basics", "Greetings", "Animals"]
-
-# def get_next_category(current_category):
-#     """
-#     Returns the next category ID, or None if this is the last one.
-#     """
-#     if current_category not in LEARNING_PATH:
-#         print(f"⚠️ Warning: '{current_category}' not found in LEARNING_PATH: {LEARNING_PATH}")
-#         return None
+def get_next_category(current_category, target_lang):
+    """
+    Returns the next un-mastered category ID.
+    It searches sequentially starting from the current category.
+    If it reaches the end, it wraps around to the beginning.
+    Returns None if ALL categories are mastered.
+    """
+    from utils.state import get_progress  # Import here to avoid circular dependency
     
-#     idx = LEARNING_PATH.index(current_category)
-#     if idx + 1 < len(LEARNING_PATH):
-#         return LEARNING_PATH[idx + 1]
-#     return None # Finished all categories
+    categories = list(SIGNS_DB.keys())
+    
+    if current_category not in categories:
+        return categories[0] if categories else None
+    
+    current_idx = categories.index(current_category)
+    
+    # Create a search order: [Next, Next+1, ... End, Start, Start+1, ... Prev]
+    # This ensures we prefer moving forward, but will wrap around to find missed levels.
+    search_order = categories[current_idx+1:] + categories[:current_idx+1]
+    
+    for cat in search_order:
+        # Determine signs list (Handle ABC dynamic logic)
+        if cat == "ABC":
+            signs = ASL_ALPHABET if target_lang == "ASL" else ISL_ALPHABET
+        else:
+            signs = SIGNS_DB.get(cat, [])
+            
+        # Check if this category is mastered
+        # A category is mastered ONLY if ALL signs have progress >= 3
+        is_mastered = True
+        for sign in signs:
+            if get_progress(target_lang, cat, sign) < 3:
+                is_mastered = False
+                break # Found an un-mastered sign, so the category is incomplete
+        
+        # If we found a category that is NOT mastered, return it immediately
+        if not is_mastered:
+            return cat
+            
+    # If we loop through everything and find nothing un-mastered
+    return None
 
 def get_category_signs(category, target_lang):
     if category == "ABC":
