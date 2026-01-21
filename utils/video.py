@@ -176,7 +176,7 @@ if HAS_WEBRTC:
             # Dynamic font size and stroke thickness based on width (Reference: 640px)
             scale_ratio = img_pil.width / 640.0
             dynamic_stroke = max(1, int(3 * scale_ratio))
-            dynamic_font_size = int(scale_ratio * font_size)
+            dynamic_font_size = max(10, int(scale_ratio * font_size))
             
             font = None
             for f_name in font_options:
