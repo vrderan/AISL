@@ -167,7 +167,7 @@ def render_language_selection():
     st.markdown(f"<h2 style='text-align: center;'>{get_string('select_learning_lang', st.session_state.app_lang)}</h2>", unsafe_allow_html=True)
     
     # Columns
-    c1, c_spacer, c2 = st.columns([1, 0.2, 1])
+    _, c1, _, c2, _ = st.columns([0.15, 0.8, 0.1, 0.8, 0.15])
     
     with c1:
         render_language_column("ASL")
