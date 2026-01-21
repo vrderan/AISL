@@ -222,8 +222,8 @@ def render_learning():
                 # --- CSS GENERATION ---
                 custom_class = "sign-btn"
                 bg_color = f"linear-gradient(to right, #e6ffe6 {pct}%, transparent {pct}%)"
-                border_color = "#d1d5db"
-                bottom_border = "#e0e0e0"
+                border_color = "#b8bfc9"
+                bottom_border = border_color # "#e0e0e0"
                 text_color = "inherit"
                 
                 if is_selected:
