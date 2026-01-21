@@ -477,7 +477,7 @@ def render_learning():
                 try:
                     if st.session_state.current_sign:
                         if category == 'ABC':
-                            local_img_path = os.path.join("signing_instructions", f"{st.session_state.current_sign}.png")
+                            local_img_path = os.path.join("utils", "signing_instructions", f"{st.session_state.current_sign}.png")
                             if os.path.exists(local_img_path):
                                 st.image(local_img_path, width='stretch')
                             else:

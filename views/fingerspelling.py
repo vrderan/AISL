@@ -276,9 +276,9 @@ def render_fingerspelling():
             st.subheader("Hint")
             
             paths_to_try = [
-                os.path.join("signing_instructions", f"{model_target}.png"),
-                os.path.join("signing_instructions", f"{model_target.lower()}.png"),
-                os.path.join("signing_instructions", f"{model_target.upper()}.png")
+                os.path.join("utils", "signing_instructions", f"{model_target}.png"),
+                os.path.join("utils", "signing_instructions", f"{model_target.lower()}.png"),
+                os.path.join("utils", "signing_instructions", f"{model_target.upper()}.png")
             ]
             
             found_img = None
