@@ -145,41 +145,6 @@ if HAS_WEBRTC:
             
             return landmark_style, connection_style
         
-        # not used
-        def draw_text_with_pil(self, img, text, position, font_size=30, color=(0, 255, 0)):
-            """
-            Draws text using PIL to support unicode/Hebrew.
-            img: OpenCV image (numpy array)
-            text: String to draw
-            position: (x, y) tuple
-            color: (B, G, R) tuple
-            """
-            # Convert CV2 (BGR) to PIL (RGB)
-            img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-            draw = ImageDraw.Draw(img_pil)
-
-            # Try to load a standard system font
-            try:
-                system = platform.system()
-                if system == "Windows":
-                    font = ImageFont.truetype("arial.ttf", font_size)
-                elif system == "Darwin": # MacOS
-                    font = ImageFont.truetype("Arial.ttf", font_size)
-                else: # Linux
-                    font = ImageFont.truetype("DejaVuSans.ttf", font_size)
-            except IOError:
-                # Fallback to default if TTF not found
-                font = ImageFont.load_default()
-
-            # PIL uses RGB, OpenCV uses BGR. Convert color tuple.
-            # Input color is (B, G, R) -> We need (R, G, B)
-            rgb_color = (color[2], color[1], color[0])
-
-            draw.text(position, text, font=font, fill=rgb_color)
-
-            # Convert back to OpenCV (BGR)
-            return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
-        
         def draw_modern_text(self, img, text, y_pos=50, font_size=40, color=(255, 255, 255), centered=True):
             """
             Draws text with Hebrew/BiDi support and automatic font fallback.
@@ -208,11 +173,16 @@ if HAS_WEBRTC:
                 "FreeSans.ttf"
             ]
             
+            # Dynamic font size and stroke thickness based on width (Reference: 640px)
+            scale_ratio = img_pil.width / 640.0
+            dynamic_stroke = max(1, int(3 * scale_ratio))
+            dynamic_font_size = int(scale_ratio * font_size)
+            
             font = None
             for f_name in font_options:
                 try:
                     # Try to load the font
-                    font = ImageFont.truetype(f_name, font_size)
+                    font = ImageFont.truetype(f_name, dynamic_font_size)
                     # If successful, break the loop
                     break 
                 except IOError:
@@ -241,7 +211,7 @@ if HAS_WEBRTC:
                 text, 
                 font=font, 
                 fill=rgb_color, 
-                stroke_width=3, 
+                stroke_width=dynamic_stroke, 
                 stroke_fill=outline_color
             )
             
@@ -381,6 +351,11 @@ if HAS_WEBRTC:
                 img = cv2.flip(img, 1)
                 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 raw_results, hands = self.process_image(img_rgb)
+
+                # Calculate dynamic font size scale and thickness
+                # 640 is the reference width. If width drops to 320, scale drops to 0.5
+                base_scale = 1.0
+                font_scale = base_scale * (img_w / 640.0)
                 
                 left_hand = None
                 right_hand = None
