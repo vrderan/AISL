@@ -2,7 +2,6 @@ import streamlit as st
 from utils.state import init_state
 from utils.styling import load_css
 import warnings
-from time import sleep
 
 # Suppress the specific Protobuf warning
 warnings.filterwarnings("ignore", category=UserWarning, module="google.protobuf.symbol_database")
@@ -25,7 +24,6 @@ def main():
     # 2. CLEAR the stage immediately. 
     # This forces Streamlit to remove old widgets before calculating the new ones.
     app_placeholder.empty()
-    sleep(0.01)
 
     # 3. Render the new scene inside the clean stage.
     with app_placeholder.container():
