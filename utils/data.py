@@ -1,3 +1,5 @@
+import streamlit as st
+
 # Define signs for each category
 SIGNS_DB = {
     "ABC": [], # Populated dynamically below
@@ -87,6 +89,7 @@ def get_next_category(current_category, target_lang):
     # If we loop through everything and find nothing un-mastered
     return None
 
+@st.cache_data
 def get_category_signs(category, target_lang):
     if category == "ABC":
         if target_lang == "ISL":

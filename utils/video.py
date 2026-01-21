@@ -5,10 +5,8 @@ import numpy as np
 from typing import List, Dict, Any
 import traceback
 from PIL import Image, ImageDraw, ImageFont
-import platform
 import random
 from bidi.algorithm import get_display
-import torch
 import math
 
 try:
@@ -42,7 +40,6 @@ if HAS_WEBRTC:
             # self.frame_count = 0
             # self.start_time = time.time()
             
-            # if category == 'ABC':
             self.mp_hands = mp.solutions.hands
             self.hands = self.mp_hands.Hands(static_image_mode=static_image_mode,
                                             max_num_hands=max_num_hands,
@@ -50,12 +47,6 @@ if HAS_WEBRTC:
                                             min_tracking_confidence=min_tracking_confidence,
                                             model_complexity=0,  # 0 = Lite (Fastest), 1 = Full (Default)
                                             )
-            # else:
-            #     self.mp_hands = mp.solutions.holistic
-            #     self.hands = self.mp_hands.Holistic(static_image_mode=static_image_mode,
-            #                                         min_detection_confidence=min_detection_confidence,
-            #                                         min_tracking_confidence=min_tracking_confidence,
-            #                                         )
                 
             self.mp_styles = mp.solutions.drawing_styles
             # self.landmark_style, self.connection_style = self.get_fun_hand_styles()
@@ -73,6 +64,9 @@ if HAS_WEBRTC:
             self.result_queue = result_queue
             self.target_sign = target_sign
             self.category = category
+            if self.category != 'ABC':
+                global torch
+                import torch
             self.language = language
             self.previous_target_sign = target_sign
             self.first_match_time = None
@@ -351,11 +345,6 @@ if HAS_WEBRTC:
                 img = cv2.flip(img, 1)
                 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 raw_results, hands = self.process_image(img_rgb)
-
-                # Calculate dynamic font size scale and thickness
-                # 640 is the reference width. If width drops to 320, scale drops to 0.5
-                base_scale = 1.0
-                font_scale = base_scale * (img_w / 640.0)
                 
                 left_hand = None
                 right_hand = None

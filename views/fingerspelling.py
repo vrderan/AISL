@@ -12,7 +12,6 @@ except ImportError:
 from streamlit_extras.stylable_container import stylable_container
 from utils.localization import get_string
 from utils.state import navigate_back
-from utils.video import HandLandmarkProcessor
 from utils.data import ASL_ALPHABET, ISL_ALPHABET
 from utils.model_loader import load_model
 
@@ -36,9 +35,6 @@ def render_fingerspelling():
     # 2. Load Model & Prepare Variables
     target_lang = st.session_state.target_lang
     category = "ABC" 
-    
-    # We load the model here (cached via the loader)
-    model = load_model(target_lang, category)
     
     # Variables for the Factory
     current_queue = st.session_state.result_queue
@@ -119,6 +115,9 @@ def render_fingerspelling():
         model_target = HEBREW_MAPPING[current_target]
     def processor_factory():
         try:
+            from utils.video import HandLandmarkProcessor
+            # We load the model here (cached via the loader)
+            model = load_model(target_lang, category)
             return HandLandmarkProcessor(
                 model=model,
                 result_queue=current_queue,

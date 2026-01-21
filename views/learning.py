@@ -6,16 +6,13 @@ import traceback
 try:
     from streamlit_webrtc import webrtc_streamer, WebRtcMode, RTCConfiguration
     HAS_WEBRTC = True
-    from streamlit_autorefresh import st_autorefresh
 except ImportError:
     HAS_WEBRTC = False
-    st_autorefresh = None
 
 from streamlit_extras.stylable_container import stylable_container
 from utils.localization import get_string
 from utils.state import navigate_to, navigate_back, get_progress, increment_progress, decrement_progress, toggle_flag
 from utils.data import get_category_signs, get_sign_display_name, get_sign_video_url, get_next_category
-from utils.video import HandLandmarkProcessor
 from utils.model_loader import load_model
 
 @st.dialog("🎉 Category Mastered!")
@@ -164,13 +161,14 @@ def render_learning():
     col_list, col_video, col_instr = st.columns([1.5, 2.5, 2.0])
     
     signs = get_category_signs(category, target_lang)
-    model = load_model(target_lang, category)
     
     current_queue = st.session_state.result_queue
     current_sign = st.session_state.current_sign
     
     def processor_factory():
         try:
+            from utils.video import HandLandmarkProcessor
+            model = load_model(target_lang, category)
             return HandLandmarkProcessor(
                 model=model,
                 result_queue=current_queue,

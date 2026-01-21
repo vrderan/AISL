@@ -13,103 +13,88 @@ CATEGORY_KEYS = {
     "cat_fingerspelling": "Fingerspelling"
 }
 
-# --- NEW MASTER FUNCTION ---
-# This replaces both 'get_category_progress' and 'calculate_total_progress'
-def get_language_stats(target_lang):
-    """
-    Calculates ALL progress stats for a language in a single pass.
-    Returns:
-       - total_learned (int): Total signs learned across all categories
-       - total_signs (int): Total available signs
-       - cat_progress (dict): A dictionary mapping category keys to their % completion
-                              e.g. {'cat_abc': 50, 'cat_basics': 100}
-    """
-    stats = {
-        "total_learned": 0,
-        "total_signs": 0,
-        "cat_progress": {}
-    }
+def get_category_progress(target_lang, category_key):
+    cat_internal = CATEGORY_KEYS.get(category_key, category_key)
+    signs = get_category_signs(cat_internal, target_lang)
+    total_signs = len(signs)
     
-    # Get the user's progress for this language ONCE
-    user_progress = st.session_state.user_progress.get(target_lang, {})
-    
-    for cat_key in CATEGORIES:
-        # 1. Handle special cases (Fingerspelling has no fixed signs to count)
-        if cat_key == "cat_fingerspelling":
-            stats["cat_progress"][cat_key] = 0
-            continue
+    if total_signs == 0:
+        return 0
 
-        cat_internal = CATEGORY_KEYS.get(cat_key)
-        
-        # 2. Get signs for this category
-        # (Make sure get_category_signs is cached in utils/data.py!)
-        signs = get_category_signs(cat_internal, target_lang)
-        cat_total = len(signs)
-        
-        if cat_total == 0:
-            stats["cat_progress"][cat_key] = 0
-            continue
-            
-        # 3. Calculate how many signs in this category are learned
-        cat_learned = 0
-        cat_data = user_progress.get(cat_internal, {})
-        
+    learned_count = 0
+    if target_lang in st.session_state.user_progress:
+        cat_data = st.session_state.user_progress[target_lang].get(cat_internal, {})
         for sign in signs:
             if cat_data.get(sign, 0) >= 3:
-                cat_learned += 1
-        
-        # 4. Update the GLOBAL totals
-        stats["total_learned"] += cat_learned
-        stats["total_signs"] += cat_total
-        
-        # 5. Save the CATEGORY specific percentage
-        stats["cat_progress"][cat_key] = int((cat_learned / cat_total) * 100)
-        
-    return stats
+                learned_count += 1
+    
+    return int((learned_count / total_signs) * 100)
 
-# --- UPDATED RENDER FUNCTION ---
+def calculate_total_progress(target_lang):
+    # Internal category names (excluding custom fingerspelling)
+    categories = ["ABC", "Basics", "Greetings", "Animals"]
+    
+    total_signs = 0
+    for cat in categories:
+        signs = get_category_signs(cat, target_lang)
+        total_signs += len(signs)
+        
+    learned_count = 0
+    if target_lang in st.session_state.user_progress:
+        lang_data = st.session_state.user_progress[target_lang]
+        for cat, signs_data in lang_data.items():
+            for sign, count in signs_data.items():
+                if count >= 3:
+                    learned_count += 1
+    
+    return learned_count, total_signs
+
 def render_language_column(lang_code):
     app_lang = st.session_state.app_lang
     lang_name = get_string(lang_code.lower(), app_lang)
     
-    # CALL THE MASTER FUNCTION ONCE HERE
-    stats = get_language_stats(lang_code)
-    
     # Header
     st.markdown(f"<h3 style='text-align: center;'>{lang_name}</h3>", unsafe_allow_html=True)
     
-    # Progress (Read from stats, don't recalculate!)
-    st.markdown(
-        f"<div style='text-align: center; color: gray; margin-bottom: 20px;'>"
-        f"{stats['total_learned']}/{stats['total_signs']} {get_string('signs_learned', app_lang)}"
-        f"</div>", 
-        unsafe_allow_html=True
-    )
+    # Progress
+    learned, total = calculate_total_progress(lang_code)
+    st.markdown(f"<div style='text-align: center; color: gray; margin-bottom: 20px;'>{learned}/{total} {get_string('signs_learned', app_lang)}</div>", unsafe_allow_html=True)
     
-    # Categories Loop
+    # Categories
     for cat_key in CATEGORIES:
         localized_name = get_string(cat_key, app_lang)
         display_name = localized_name
         
-        # ISL Bilingual Logic
-        if lang_code == "ISL" and cat_key != "cat_fingerspelling" and app_lang == "en":
-             name_he = get_string(cat_key, "he")
-             display_name = f"{localized_name} ({name_he})"
-
+        # Bilingual display logic for ISL if needed, or just standard localized
+        # Previous logic:
+        if lang_code == "ISL":
+            name_he = get_string(cat_key, "he")
+            name_en = get_string(cat_key, "en")
+            if cat_key != "cat_fingerspelling":
+                 if app_lang == "he":
+                    display_name = name_he
+                 elif app_lang == "en":
+                    display_name = f"{name_en} ({name_he})"
+            else:
+                display_name = localized_name
+        
         target_page = "learning"
-        button_label = ""
+        is_completed = False
         
         if cat_key == "cat_fingerspelling":
             button_label = display_name
             target_page = "fingerspelling"
         else:
-            # READ PROGRESS FROM STATS (Fast!)
-            progress = stats["cat_progress"].get(cat_key, 0)
-            
+            progress = get_category_progress(lang_code, cat_key)
             if progress >= 100:
+                is_completed = True
                 button_label = f"✅ {display_name} ({get_string('category_mastered', app_lang)})"
             else:
                 button_label = f"{display_name} ({progress}%)"
+        
+        # Styling for completed buttons?
+        # User said: "the button of the category should show that"
+        # I added checkmark and text.
         
         key = f"{lang_code}_{cat_key}"
         
@@ -122,18 +107,18 @@ def render_language_column(lang_code):
             st.rerun()
 
 def render_language_selection():
-    # CSS for spacing
+    # Adjust page padding for a more compact look
     st.markdown("""
         <style>
         div.block-container {
-            padding-top: 2rem !important;
+            padding-top: 2rem !important; /* Reduced from default ~6rem */
             padding-bottom: 0rem !important;
-            max-width: 95% !important;
+            max-width: 95% !important; /* Optional: Use more screen width */
         }
         </style>
     """, unsafe_allow_html=True)
     
-    # Back Button
+    # Simple Back Button
     with stylable_container(
         key="back_btn_container",
         css_styles="""
@@ -144,6 +129,7 @@ def render_language_selection():
                 width: 45px !important;
                 height: 45px !important;
                 padding: 0 !important;
+                padding-bottom: 0 !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
@@ -151,22 +137,24 @@ def render_language_selection():
                 transition: all 0.2s ease !important;
             }
             button:hover {
-                background: rgba(128, 128, 128, 0.1) !important;
-                transform: scale(1.05);
+                background: rgba(128, 128, 128, 0.1) !important; /* Light hover fill */
+                border-color: rgba(128, 128, 128, 0.5) !important;
+                transform: scale(1.05); /* Slight pop */
             }
+            /* Fix for the icon inside the button */
             button span {
                 font-size: 1.5rem !important;
             }
         """
     ):
+        # Use the built-in material icon support (Streamlit 1.30+)
         if st.button("", icon=":material/arrow_back:", key="back_btn"):
             navigate_back()
             st.rerun()
 
-    # Main Title
+    # Center Elements
     st.markdown(f"<h2 style='text-align: center;'>{get_string('select_learning_lang', st.session_state.app_lang)}</h2>", unsafe_allow_html=True)
     
-    # Columns
     c1, c_spacer, c2 = st.columns([1, 0.2, 1])
     
     with c1:

@@ -60,6 +60,11 @@ class DummyModel:
         return "Unknown", 0.0
 
 # --- 3. The Loader Function ---
+@st.cache_data
+def get_model_dirs(model_dir):
+    # This might take 0.5s to scan disk, but now it only runs once per session
+    return os.listdir(model_dir)
+
 @st.cache_resource(max_entries=1, show_spinner=False)
 def load_model(lang, category):
     model_dir = os.path.join("utils", "trained models")   
@@ -75,7 +80,7 @@ def load_model(lang, category):
     # --- LOGIC SPLIT ---
     # Case A: 'ABC' Category -> Random Forest (Joblib)
     if category == 'ABC':
-        for f in os.listdir(model_dir):
+        for f in get_model_dirs(model_dir):
             if f.startswith(prefix) and (f.endswith('.pkl') or f.endswith('.joblib')):
                 try:
                     model = joblib.load(os.path.join(model_dir, f))
@@ -88,7 +93,7 @@ def load_model(lang, category):
     else:        
         # Let's try to find a .pth file that matches the category, or default to a generic name
         target_file = None
-        for f in os.listdir(model_dir):
+        for f in get_model_dirs(model_dir):
             # Logic: Look for file starting with 'ASL_Greetings' (example) and ending in .pth
             if f.startswith(f"{lang}_{category}") and f.endswith('.pth'):
                 target_file = f
