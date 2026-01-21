@@ -60,7 +60,7 @@ class DummyModel:
         return "Unknown", 0.0
 
 # --- 3. The Loader Function ---
-@st.cache_resource(max_entries=1)
+@st.cache_resource(max_entries=1, show_spinner=False)
 def load_model(lang, category):
     model_dir = os.path.join("utils", "trained models")   
      
