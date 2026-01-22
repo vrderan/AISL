@@ -6,7 +6,7 @@ import os
 import io
 import functools # <--- NEW IMPORT
 
-from utils.state import navigate_to, navigate_back
+from utils.state import navigate_to, navigate_back, toggle_flag
 from utils.styling import apply_video_mirror_style
 from utils.localization import get_string
 from utils.data import get_category_signs, get_sign_video_url
@@ -49,18 +49,19 @@ def create_quiz_processor(model, result_queue, category, target_lang):
 @st.fragment(run_every=0.5)
 def poll_quiz_queue():
     try:
-        result = st.session_state.quiz_result_queue.get_nowait()
-        if result == "success":
-            st.toast(f"Correct! Moving to next sign...", icon="🎉")
-            
-            # Logic to update sign
-            target_lang = st.session_state.target_lang
-            category = st.session_state.category
-            all_signs = get_category_signs(category, target_lang)
-            current_sign = st.session_state.quiz_current_sign
-            st.session_state.quiz_current_sign = get_new_random_sign(current_sign, all_signs)
-            
-            st.rerun()
+        if "quiz_result_queue" in st.session_state:
+            result = st.session_state.quiz_result_queue.get_nowait()
+            if result == "success":
+                # st.toast(f"Correct! Moving to next sign...", icon="🎉")
+                
+                # Logic to update sign
+                target_lang = st.session_state.target_lang
+                category = st.session_state.category
+                all_signs = get_category_signs(category, target_lang)
+                current_sign = st.session_state.quiz_current_sign
+                st.session_state.quiz_current_sign = get_new_random_sign(current_sign, all_signs)
+                
+                st.rerun()
     except queue.Empty:
         pass
 
@@ -72,7 +73,7 @@ def render_quiz():
     category = st.session_state.category
     all_signs = get_category_signs(category, target_lang)
     
-    if "quiz_current_sign" not in st.session_state:
+    if "quiz_current_sign" not in st.session_state or st.session_state.quiz_current_sign not in all_signs:
         st.session_state.quiz_current_sign = get_new_random_sign(None, all_signs)
         
     current_sign = st.session_state.quiz_current_sign
@@ -126,10 +127,10 @@ def render_quiz():
             navigate_back()
             st.rerun()
 
-    st.markdown(f"<h2 style='text-align: center;'>{target_lang} Quiz!</h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='text-align: center; margin-bottom: -25px; margin-top: -25px;'>{target_lang} {category} Quiz!</h2>", unsafe_allow_html=True)
     st.divider()
 
-    left_col, mid_col, right_col = st.columns([1, 2, 1])
+    left_col, mid_col, right_col = st.columns([1, 1.75, 1.25])
 
     with left_col:
         st.markdown("### Sign this:")
@@ -137,12 +138,8 @@ def render_quiz():
         st.write("") 
         
         if st.button("📌 Save for Later", use_container_width=True):
-            if "saved_signs" not in st.session_state:
-                st.session_state.saved_signs = []
-            save_item = (target_lang, category, current_sign)
-            if save_item not in st.session_state.saved_signs:
-                st.session_state.saved_signs.append(save_item)
-                st.toast(f"Saved '{current_sign}'!", icon="📌")
+            toggle_flag(target_lang, category, current_sign)
+            st.toast(f"Saved '{current_sign}'!", icon="📌")
 
         if st.button("⏭️ Skip", use_container_width=True):
             st.session_state.quiz_current_sign = get_new_random_sign(current_sign, all_signs)
@@ -193,15 +190,17 @@ def render_quiz():
                 ctx.video_processor.target_sign = current_sign
 
     with right_col:
-        st.write("") 
-        st.markdown("### Need Help?")
+        left_col2, right_col2 = st.columns([1, 1])
+        with left_col2:
+            st.markdown("### Need Help?")
         
-        hint_key = f"show_hint_{current_sign}"
-        if hint_key not in st.session_state:
-            st.session_state[hint_key] = False
+        with right_col2:
+            hint_key = f"show_hint_{current_sign}"
+            if hint_key not in st.session_state:
+                st.session_state[hint_key] = False
 
-        if st.button("💡 I don't remember"):
-            st.session_state[hint_key] = not st.session_state[hint_key]
+            if st.button("💡 I don't remember"):
+                st.session_state[hint_key] = not st.session_state[hint_key]
 
         if st.session_state[hint_key]:
             if category == 'ABC':
