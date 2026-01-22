@@ -1,7 +1,6 @@
 import streamlit as st
 from utils.localization import get_string
 from utils.state import navigate_to
-from time import sleep
 import os
 
 def render_home():
@@ -37,7 +36,6 @@ def render_home():
         if st.button(get_string("login", st.session_state.app_lang), width='stretch'):
             navigate_to("language_selection")
             col2.empty()
-            sleep(0.02)
             st.rerun()
         
         st.write("") 
@@ -45,7 +43,6 @@ def render_home():
         if st.button(get_string("signup", st.session_state.app_lang), width='stretch'):
             navigate_to("language_selection")
             col2.empty()
-            sleep(0.02)
             st.rerun()
             
         st.write("") 
@@ -53,7 +50,6 @@ def render_home():
         if st.button(get_string("guest", st.session_state.app_lang), width='stretch'):
             navigate_to("language_selection")
             col2.empty()
-            sleep(0.02)
             st.rerun()
         
         st.write("") 
@@ -64,13 +60,11 @@ def render_home():
              if st.button(f"⚙️ {get_string('settings_title', st.session_state.app_lang)}", key="settings_btn", width='stretch'):
                 navigate_to("settings")
                 col2.empty()
-                sleep(0.02)
                 st.rerun()
         with col_abt:
              if st.button(f"ℹ️ {get_string('about_title', st.session_state.app_lang)}", key="about_btn", width='stretch'):
                 navigate_to("about")
                 col2.empty()
-                sleep(0.02)
                 st.rerun()
 
         st.write("")
@@ -81,11 +75,9 @@ def render_home():
             if st.button("Saved", width='stretch'):
                 navigate_to("saved")
                 col2.empty()
-                sleep(0.02)
                 st.rerun()
         with col_req:
             if st.button("Want More?", width='stretch'):
                 navigate_to("requests")
                 col2.empty()
-                sleep(0.02)
                 st.rerun()
