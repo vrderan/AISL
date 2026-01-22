@@ -152,11 +152,18 @@ def render_learning():
     category = st.session_state.category
     target_lang = st.session_state.target_lang
     
-    st.markdown(f"""
+    col_title, col_quiz = st.columns([3, 1])
+    with col_title:
+        st.markdown(f"""
                 <h2 style="margin-bottom: 0.2rem; padding-bottom: 0.2rem; margin-top: 0rem; padding-top: 0rem;">
                     {get_string('learning_title', st.session_state.app_lang)}: {category} ({target_lang})
                 </h2>
             """, unsafe_allow_html=True)
+    with col_quiz:
+        if st.button("🎓 Quiz Me!", use_container_width=True):
+            # We don't change the category/lang, just the view
+            navigate_to("quiz")
+            st.rerun()
     
     col_list, col_video, col_instr = st.columns([1.5, 2.5, 2.0])
     

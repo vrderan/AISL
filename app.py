@@ -1,3 +1,10 @@
+import asyncio
+import sys
+# This forces Windows to use the 'Selector' event loop instead of the default 'Proactor'.
+# This prevents the 'NoneType' / 'call_exception_handler' crashes when closing WebRTC connections.
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 import streamlit as st
 from utils.state import init_state
 from utils.styling import load_css
@@ -51,6 +58,9 @@ def main():
         elif st.session_state.page == "requests":
             import views.requests as requests_view
             requests_view.render_requests()
+        elif st.session_state.page == "quiz":
+            import views.quiz as quiz_view
+            quiz_view.render_quiz()
         else:
             st.write("404 - Page not found")
             if st.button("Go Home"):
