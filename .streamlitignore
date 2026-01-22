@@ -1,0 +1,18 @@
+# Ignore git files
+.git/
+
+# Ignore Python cache files (Major culprit!)
+__pycache__/
+*.pyc
+
+# Ignore any data/log folders you might be writing to
+logs/
+data/
+temp/
+*.log
+*.txt
+*.csv
+*.json
+
+# ignore google drive files
+*ini
