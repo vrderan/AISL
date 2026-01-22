@@ -4,11 +4,11 @@ from utils.localization import get_string
 from utils.state import navigate_to, navigate_back
 from utils.data import get_category_signs
 
-CATEGORIES = ["cat_abc", "cat_basics", "cat_greetings", "cat_animals", "cat_fingerspelling"]
+CATEGORIES = ["cat_abc", "cat_basics", "cat_questions", "cat_animals", "cat_fingerspelling"]
 CATEGORY_KEYS = {
     "cat_abc": "ABC",
     "cat_basics": "Basics",
-    "cat_greetings": "Greetings",
+    "cat_questions": "Questions",
     "cat_animals": "Animals",
     "cat_fingerspelling": "Fingerspelling"
 }

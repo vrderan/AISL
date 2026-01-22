@@ -584,12 +584,6 @@ def render_learning():
                     st.toast(f"🎉 CONGRATULATIONS! You have mastered the '{category}' category!")
                     time.sleep(1.0) # Short pause before the reruns opens the modal
                 
-                # all_mastered = all(get_progress(target_lang, category, s) >= 3 for s in signs)
-                # if all_mastered:
-                #     st.balloons()
-                #     st.toast(f"🎉 CONGRATULATIONS! You have mastered the '{category}' category!")
-                #     time.sleep(2)
-                
                 st.rerun()
 
         except queue.Empty:
