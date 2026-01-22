@@ -9,6 +9,7 @@ import streamlit as st
 from utils.state import init_state
 from utils.styling import load_css
 import warnings
+from time import sleep
 
 # Suppress the specific Protobuf warning
 warnings.filterwarnings("ignore", category=UserWarning, module="google.protobuf.symbol_database")
@@ -27,10 +28,13 @@ def main():
     # 1. Create a single, massive placeholder that takes up the whole page.
     # This is our "Stage".
     app_placeholder = st.empty()
+    st.session_state.app_placeholder = app_placeholder
 
     # 2. CLEAR the stage immediately. 
     # This forces Streamlit to remove old widgets before calculating the new ones.
-    app_placeholder.empty()
+    if st.session_state.page not in ["learning", "fingerspelling", "quiz"]:
+        app_placeholder.empty()
+        sleep(0.01)
 
     # 3. Render the new scene inside the clean stage.
     with app_placeholder.container():
