@@ -1,6 +1,3 @@
-# --- Core Environment ---
-python_version >= "3.10"
-
 # --- The "Golden Stack" (Do not change these versions) ---
 # These specific versions ensure MediaPipe works with Streamlit components
 mediapipe==0.10.14
