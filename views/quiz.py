@@ -9,7 +9,7 @@ import functools # <--- NEW IMPORT
 from utils.state import navigate_to, navigate_back, toggle_flag
 from utils.styling import apply_video_mirror_style
 from utils.localization import get_string
-from utils.data import get_category_signs, get_sign_video_url
+from utils.data import get_category_signs, get_sign_video_url, get_sign_display_name
 from streamlit_extras.stylable_container import stylable_container
 
 # Ensure queue exists
@@ -139,7 +139,7 @@ def render_quiz():
 
     with left_col:
         st.markdown("### Sign this:")
-        st.markdown(f"<h1 style='color: #4da6ff;'>{current_sign}</h1>", unsafe_allow_html=True)
+        st.markdown(f"<h1 style='color: #4da6ff;'>{get_sign_display_name(current_sign, target_lang)}</h1>", unsafe_allow_html=True)
         st.write("") 
         
         if st.button("📌 Save for Later", use_container_width=True):
