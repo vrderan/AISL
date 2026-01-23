@@ -3,14 +3,18 @@
 An interactive, AI-powered application for learning Sign Language (ASL & ISL) in real-time. The app uses computer vision to track your hands and provides instant feedback on your signing accuracy.
 
 ## ✨ Features
-* **Real-time AI Feedback:** Uses MediaPipe to detect hand landmarks and evaluate your signing.
+* **Real-time AI Feedback:** Uses MediaPipe and Machine/Depp-learning models to detect hand landmarks and evaluate your signing.
 * **Gamified Learning:** Progress bars, success animations, and mastery levels for every sign.
 * **Multi-Language Support:** Includes support for both American Sign Language (ASL) and Israeli Sign Language (ISL).
 * **Interactive Video Instructions:** Built-in video examples and guides for every sign.
 
 ## 🛠️ Prerequisites
 * **Python 3.10** (Strictly Required for MediaPipe compatibility)
+* A computer with a **decent CPU** for running the app locally.
 * **Webcam**
+
+## 📝 Note
+There is a deployed version of this app, however it did not run smoothly enough to be usable due to it's live video stream and processing demands. Please run the app locally by following the instructions below.
 
 ## 🚀 Installation Guide
 
@@ -64,7 +68,8 @@ streamlit run app.py
 ### 📂 Project Structure
 * app.py: The main entry point.
 * views/: Contains the UI logic for Learning and Practice pages.
-* utils/: Helper functions for video processing, state management, and data. Also contains the trained models and some of the signing instructions.
+* utils/: Helper functions for video processing, state management, and data. Also contains the trained models.
+* images/: Contains fingerspelling instructions and app logo.
 
 ### ⚠️ Troubleshooting
 **"AttributeError: module 'mediapipe' has no attribute 'solutions'"** This usually happens if a newer version of protobuf was installed automatically. Fix: Run this command to force the compatible versions:
