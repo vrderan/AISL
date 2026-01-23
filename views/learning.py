@@ -401,6 +401,7 @@ def render_learning():
                             },
                             "audio": False
                         },
+                        rtc_configuration={"iceServers": []},
                         video_processor_factory=processor_factory,
                         async_processing=True,
                         desired_playing_state=True,
@@ -531,9 +532,11 @@ def render_learning():
                     unsafe_allow_html=True
                 )
     
-    @st.fragment(run_every=0.2)
+    @st.fragment(run_every=0.3)
     def check_for_success():
-        if st.session_state.page != "learning":
+        # If we are not on the learning page, stop immediately.
+        # This prevents the "Fragment does not exist" spam in your logs.
+        if st.session_state.get("page") != "learning":
             return
         if st.session_state.get("show_mastery_modal", False):
             return

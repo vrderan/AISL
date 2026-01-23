@@ -34,7 +34,7 @@ def main():
     # This forces Streamlit to remove old widgets before calculating the new ones.
     if st.session_state.page not in ["learning", "fingerspelling", "quiz"]:
         app_placeholder.empty()
-        sleep(0.01)
+        sleep(0.02)
 
     # 3. Render the new scene inside the clean stage.
     with app_placeholder.container():

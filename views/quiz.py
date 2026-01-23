@@ -49,6 +49,11 @@ def create_quiz_processor(model, result_queue, category, target_lang):
 @st.fragment(run_every=0.5)
 def poll_quiz_queue():
     try:
+        # If we are not on the learning page, stop immediately.
+        # This prevents the "Fragment does not exist" spam in your logs.
+        if st.session_state.get("page") != "quiz":
+            return
+        
         if "quiz_result_queue" in st.session_state:
             result = st.session_state.quiz_result_queue.get_nowait()
             if result == "success":
@@ -179,9 +184,17 @@ def render_quiz():
                     "video": {"width": 640, "height": 480, "frameRate": 30},
                     "audio": False
                 },
+                rtc_configuration={"iceServers": []},
                 video_processor_factory=stable_factory, # <--- Pass the stable factory
                 async_processing=True,
                 desired_playing_state=True,
+                video_html_attrs={
+                            "style": {"width": "100%", "border-radius": "10px"}, 
+                            "controls": False, 
+                            "autoPlay": True,
+                            "playsInline": False,
+                            "muted": True
+                        },
             )
 
             # --- 3. HOT SWAP TARGET ---

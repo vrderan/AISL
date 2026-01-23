@@ -234,6 +234,7 @@ def render_fingerspelling():
                         },
                         "audio": False
                     },
+                    rtc_configuration={"iceServers": []},
                     video_processor_factory=processor_factory,
                     async_processing=True,
                     desired_playing_state=True,
@@ -295,9 +296,13 @@ def render_fingerspelling():
 
     # 8. Background Polling (The Listener)
     # This runs independently to check for success messages from the video thread
-    @st.fragment(run_every=0.2)
+    @st.fragment(run_every=0.3)
     def check_fs_success():
         try:           
+            # If we are not on the learning page, stop immediately.
+            # This prevents the "Fragment does not exist" spam in your logs.
+            if st.session_state.get("page") != "fingerspelling":
+                return
             if not hasattr(st.session_state, "result_queue"):
                 return
                 
