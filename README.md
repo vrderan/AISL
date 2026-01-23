@@ -3,20 +3,30 @@
 An interactive, AI-powered application for learning Sign Language (ASL & ISL) in real-time. The app uses computer vision to track your hands and provides instant feedback on your signing accuracy.
 
 ## ✨ Features
-* **Real-time AI Feedback:** Uses MediaPipe and Machine/Depp-learning models to detect hand landmarks and evaluate your signing.
+* **Real-time AI Feedback:** Uses MediaPipe and Machine/Deep-learning models to detect hand landmarks and evaluate your signing.
 * **Gamified Learning:** Progress bars, success animations, and mastery levels for every sign.
 * **Multi-Language Support:** Includes support for both American Sign Language (ASL) and Israeli Sign Language (ISL).
 * **Interactive Video Instructions:** Built-in video examples and guides for every sign.
 
 ## 🛠️ Prerequisites
 * **Python 3.10** (Strictly Required for MediaPipe compatibility)
+* **Git Large File Storage (LFS)** (Required for downloading models/images)
 * A computer with a **decent CPU** for running the app locally.
 * **Webcam**
 
 ## 📝 Note
-There is a deployed version of this app, however it did not run smoothly enough to be usable due to it's live video stream and processing demands. Please run the app locally by following the instructions below.
+There is a deployed version of this app, however it did not run smoothly enough to be usable due to its live video stream and processing demands. Please run the app locally by following the instructions below.
 
 ## 🚀 Installation Guide
+
+### 0. Install Git LFS (Important!)
+This repository contains large model files and images. You must install Git LFS **before** cloning to ensure these files are downloaded correctly.
+
+**Windows / Mac / Linux:**
+```bash
+git lfs install
+```
+(If the command is not found, download and install it from git-lfs.com)
 
 ### 1. Clone the Repository
 ```bash
@@ -39,15 +49,26 @@ conda activate aisl_app
 ```
 
 **Option B: Using Standard Python (venv)**
-Ensure you have Python 3.10 installed on your system before running this.
+Commands may vary depending on your OS installation. First, check which command runs Python 3.10 on your machine:
 
 ```bash
-# Windows
+python --version   # OR
+python3 --version  # OR
+py --list          # (Windows)
+```
+
+Use the command that returns Python 3.10.x to create the environment:
+
+Windows:
+```bash
 py -3.10 -m venv venv
 .\venv\Scripts\activate
+```
 
-# Mac/Linux
-python3.10 -m venv venv
+Mac / Linux:
+```bash
+# Use 'python3' or 'python' depending on your setup
+python3 -m venv venv
 source venv/bin/activate
 ```
 
@@ -57,6 +78,7 @@ Once your environment is active (and showing aisl_app or venv in the terminal), 
 ```bash
 pip install -r requirements.txt
 ```
+Note: On Mac/Linux, if pip doesn't work, try using pip3.
 
 ### ▶️ How to Run
 Launch the application using Streamlit:
@@ -79,3 +101,5 @@ pip install mediapipe==0.10.14 protobuf==4.25.3 streamlit-extras==0.6.0
 ```
 
 **"Feedback manager requires a model with a single signature..."** This is a harmless warning from the underlying MediaPipe engine. You can safely ignore it; the app will function correctly.
+
+**Images are broken or "UnidentifiedImageError"** This usually means Git LFS wasn't installed before cloning, so you downloaded "pointer files" instead of real images.
