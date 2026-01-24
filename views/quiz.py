@@ -38,7 +38,7 @@ def create_quiz_processor(model, result_queue, category, target_lang):
             language=target_lang,
             translate_landmarks=True if category=='ABC' else False,
             scale_landmarks=True if category=='ABC' else False,
-            hold_sign_duration = 1 if category=='ABC' else 0.1,
+            hold_sign_duration = 1 if category=='ABC' else 0 if (target_lang=="ISL" and category=="Questions") else 0.1,
             success_cooldown = 1,
         )
     except Exception as e:
