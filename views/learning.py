@@ -491,8 +491,8 @@ def render_learning():
                         else:
                             video_info = get_sign_video_url(current_sign, target_lang)
                             if video_info:
-                                url, start_t = video_info
-                                st.video(url, start_time=start_t, muted=True, autoplay=True)
+                                url, start_t, end_t = video_info
+                                st.video(url, start_time=start_t, end_time=end_t, loop=False, muted=True, autoplay=True)
                             else:
                                 st.info(f"No instructions available for '{current_sign}'.")
                         st.caption(f"How to sign: {current_sign_display}")
