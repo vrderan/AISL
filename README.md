@@ -9,10 +9,11 @@ An interactive, AI-powered application for learning Sign Language (ASL & ISL) in
 * **Interactive Video Instructions:** Built-in video examples and guides for every sign.
 
 ## 🛠️ Prerequisites
-* **Python 3.10** (Strictly Required for MediaPipe compatibility)
-* **Git Large File Storage (LFS)** (Required for downloading models/images)
+* **Python 3.10** (Strictly Required for MediaPipe compatibility).
+* **Git Large File Storage (LFS)** (Required for downloading models/images).
 * A computer with a **decent CPU** for running the app locally.
-* **Webcam**
+* **Webcam**.
+* **Well lit environment** to allow proper hand tracking.
 
 ## 📝 Note
 There is a deployed version of this app, however it did not run smoothly enough to be usable due to its live video stream and processing demands. Please run the app locally by following the instructions below.
