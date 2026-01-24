@@ -160,7 +160,7 @@ def render_learning():
                 </h2>
             """, unsafe_allow_html=True)
     with col_quiz:
-        if st.button("🎓 Quiz Me!", use_container_width=True):
+        if st.button(f"🎓 {get_string('quiz_me_button', st.session_state.app_lang)}", width='stretch'):
             # We don't change the category/lang, just the view
             navigate_to("quiz")
             st.rerun()
@@ -423,9 +423,10 @@ def render_learning():
                 st.error("Missing streamlit-webrtc")
         
         else:
-            st.subheader("Start Learning")
+            # st.subheader("Start Learning")
+            st.subheader(get_string('start_learning_subheader', st.session_state.app_lang))
             st.markdown(
-                """
+                f"""
                 <div style="
                     height: 400px; 
                     background-color: #f8f9fa; 
@@ -437,8 +438,8 @@ def render_learning():
                     justify-content: center; 
                     color: #aaa;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">👈</div>
-                    <div>Select a sign from the list</div>
-                    <div>to start learning</div>
+                    <div>{get_string('select_sign_msg1', st.session_state.app_lang)}</div>
+                    <div>{get_string('select_sign_msg2', st.session_state.app_lang)}</div>
                 </div>
                 """, 
                 unsafe_allow_html=True
@@ -447,11 +448,12 @@ def render_learning():
     with col_instr:
         c_inst_title, c_inst_btn = st.columns([0.7, 0.3])
         with c_inst_title:
-            st.subheader("Instructions")
+            st.subheader(get_string('instructions_subheader', st.session_state.app_lang))
         with c_inst_btn:
             if "show_instructions" not in st.session_state:
                 st.session_state.show_instructions = True
-            btn_label = "Hide" if st.session_state.show_instructions else "Show"
+            btn_label = get_string('hide_inst_button', st.session_state.app_lang) if \
+                st.session_state.show_instructions else get_string('show_inst_button', st.session_state.app_lang)
             
             with stylable_container(
                 key="instr_btn_cont", 
@@ -492,13 +494,16 @@ def render_learning():
                             video_info = get_sign_video_url(current_sign, target_lang)
                             if video_info:
                                 url, start_t, end_t = video_info
-                                st.video(url, start_time=start_t, end_time=end_t, loop=False, muted=True, autoplay=True)
+                                loop = False
+                                if start_t == 0 and end_t is None:
+                                    loop = True
+                                st.video(url, start_time=start_t, end_time=end_t, loop=loop, muted=True, autoplay=True)
                             else:
                                 st.info(f"No instructions available for '{current_sign}'.")
-                        st.caption(f"How to sign: {current_sign_display}")
+                        st.caption(f"{get_string('how_to_sign_msg', st.session_state.app_lang)}: {current_sign_display}")
                     else:
                         st.markdown(
-                            """
+                            f"""
                             <div style="
                                 padding: 1rem;
                                 display: flex; 
@@ -508,7 +513,7 @@ def render_learning():
                                 color: #888; 
                                 border-radius: 10px;
                                 text-align: center;">
-                                <p style='margin:0;'>Select a sign to learn to view instructions</p>
+                                <p style='margin:0;'>{get_string('instructions_message1', st.session_state.app_lang)}</p>
                             </div>
                             """, 
                             unsafe_allow_html=True
@@ -517,7 +522,7 @@ def render_learning():
                     print(f"Instructions loading error:\n{traceback.format_exc()}", flush=True)
             else:
                 st.markdown(
-                    """
+                    f"""
                     <div style="
                         padding: 1rem; 
                         display: flex; 
@@ -526,7 +531,7 @@ def render_learning():
                         background-color: #f0f0f0; 
                         color: #888; 
                         border-radius: 10px;">
-                        <p style='margin:0;'>Instructions Hidden</p>
+                        <p style='margin:0;'>{get_string('inst_hidden_msg', st.session_state.app_lang)}</p>
                     </div>
                     """, 
                     unsafe_allow_html=True

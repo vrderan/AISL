@@ -72,12 +72,12 @@ def render_home():
         # Saved and Request buttons row
         col_saved, col_req = st.columns(2)
         with col_saved:
-            if st.button("Saved", width='stretch'):
+            if st.button(f"🚩 {get_string('saved_menu_button', st.session_state.app_lang)}", width='stretch'):
                 navigate_to("saved")
                 col2.empty()
                 st.rerun()
         with col_req:
-            if st.button("Want More?", width='stretch'):
+            if st.button(f"🙏 {get_string('want_more_button', st.session_state.app_lang)}", width='stretch'):
                 navigate_to("requests")
                 col2.empty()
                 st.rerun()

@@ -138,15 +138,15 @@ def render_quiz():
     left_col, mid_col, right_col = st.columns([1, 1.75, 1.25])
 
     with left_col:
-        st.markdown("### Sign this:")
+        st.markdown(f"### {get_string('sign_this_subheader', st.session_state.app_lang)}:")
         st.markdown(f"<h1 style='color: #4da6ff;'>{get_sign_display_name(current_sign, target_lang)}</h1>", unsafe_allow_html=True)
         st.write("") 
         
-        if st.button("📌 Save for Later", use_container_width=True):
+        if st.button(f"📌 {get_string('save_for_later_button', st.session_state.app_lang)}", use_container_width=True):
             toggle_flag(target_lang, category, current_sign)
             st.toast(f"Saved '{current_sign}'!", icon="📌")
 
-        if st.button("⏭️ Skip", use_container_width=True):
+        if st.button(f"⏭️ {get_string('skip_button', st.session_state.app_lang)}", use_container_width=True):
             st.session_state.quiz_current_sign = get_new_random_sign(current_sign, all_signs)
             st.rerun()
 
@@ -205,14 +205,14 @@ def render_quiz():
     with right_col:
         left_col2, right_col2 = st.columns([1, 1])
         with left_col2:
-            st.markdown("### Need Help?")
+            st.markdown(f"### {get_string('need_help_subheader', st.session_state.app_lang)}?")
         
         with right_col2:
             hint_key = f"show_hint_{current_sign}"
             if hint_key not in st.session_state:
                 st.session_state[hint_key] = False
 
-            if st.button("💡 I don't remember"):
+            if st.button(f"💡 {get_string('i_dont_remember_button', st.session_state.app_lang)}"):
                 st.session_state[hint_key] = not st.session_state[hint_key]
 
         if st.session_state[hint_key]:

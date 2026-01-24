@@ -50,10 +50,10 @@ def render_saved():
             navigate_back()
             st.rerun()
 
-    st.header("Saved Signs")
+    st.header(get_string('saved_signs_header', st.session_state.app_lang))
     
     if not st.session_state.flagged_signs:
-        st.info("No saved signs yet.")
+        st.info(get_string('no_saved_sign_msg', st.session_state.app_lang))
     else:
         for i, item in enumerate(st.session_state.flagged_signs):
             lang = item["lang"]

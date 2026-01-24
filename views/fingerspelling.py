@@ -206,7 +206,7 @@ def render_fingerspelling():
                         st.rerun()
             
             st.markdown("---")
-            if st.button("Stop / New Word", width='stretch'):
+            if st.button(get_string('new_word_button', st.session_state.app_lang), width='stretch'):
                 st.session_state.fs_active = False
                 st.rerun()
 
@@ -214,7 +214,7 @@ def render_fingerspelling():
     ctx = None
     with col_video:
         if st.session_state.fs_active and current_target:
-            st.subheader(f"Current Target: {current_target}")
+            st.subheader(f"{get_string('current_target_subheader', st.session_state.app_lang)}: {current_target}")
             
             if HAS_WEBRTC:
                 # We use a static key so the camera DOES NOT reload between letters
@@ -273,7 +273,7 @@ def render_fingerspelling():
     # 7. Instruction Column
     with col_instr:
         if st.session_state.fs_active and current_target:
-            st.subheader("Hint")
+            st.subheader(get_string('hint_subheader', st.session_state.app_lang))
             
             paths_to_try = [
                 os.path.join("images", f"{model_target}.png"),
@@ -290,7 +290,7 @@ def render_fingerspelling():
             with st.container():
                 if found_img:
                     st.image(found_img, width='stretch')
-                    st.caption(f"How to sign: {current_target}")
+                    st.caption(f"{get_string('how_to_sign_msg', st.session_state.app_lang)}: {current_target}")
                 else:
                     st.info(f"No instruction image found for '{current_target}'")
 

@@ -49,15 +49,15 @@ def render_requests():
             navigate_back()
             st.rerun()
 
-    st.header("Request Signs")
+    st.header(get_string('requests_header', st.session_state.app_lang))
     
-    st.write("Want to learn a sign that isn't here? Let us know!")
+    st.write(get_string('requests_msg', st.session_state.app_lang))
     
-    request_text = st.text_area("Enter your request:")
+    request_text = st.text_area(f"{get_string('enter_request_msg', st.session_state.app_lang)}:")
     
-    if st.button("Submit Request"):
+    if st.button(get_string('submit_button', st.session_state.app_lang)):
         if request_text.strip():
-            st.success("Request submitted! Thank you.")
+            st.success(get_string('submitted_msg', st.session_state.app_lang))
             # Logic to save request would go here
         else:
-            st.warning("Please enter some text.")
+            st.warning(get_string('enter_text_msg', st.session_state.app_lang))

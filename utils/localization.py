@@ -36,16 +36,49 @@ STRINGS = {
         "success_msg": "Good job!",
         "instructions_placeholder": "Instructions for sign: {}",
         "simulate_success": "Simulate Success",
+        "saved_menu_button": "Saved Signs",
+        "want_more_button": "Want More?",
+        "quiz_me_button": "Quiz Me!",
+        "start_learning_subheader": "Start Learning",
+        "select_sign_msg1": "Select a sign from the list",
+        "select_sign_msg2": "to start learning",
+        "instructions_subheader": "Instructions",
+        "instructions_message1": "Select a sign to learn to view instructions",
+        "hide_inst_button": "Hide",
+        "show_inst_button": "Show",
+        "inst_hidden_msg": "Instructions Hidden",
+        "current_target_subheader": "Current Target",
+        "how_to_sign_msg": "How to sign",
+        "hint_subheader": "Instructions",
+        "new_word_button": "Stop / New Word",
+        "sign_this_subheader": "Sign this",
+        "save_for_later_button": "Save for Later",
+        "skip_button": "Skip",
+        "need_help_subheader": "Need Help",
+        "i_dont_remember_button": "I don't remember",
+        "saved_signs_header": "Saved Signs",
+        "no_saved_sign_msg": "No saved signs yet.",
+        "requests_header": "Requests & Feedback",
+        "requests_msg": "Want to learn a sign that isn't here? Missing a feature? Let us know!",
+        "enter_request_msg": "Enter your request",
+        "submit_button": "Submit",
+        "submitted_msg": "Request submitted! Thank you.",
+        "enter_text_msg": "Please enter some text.",
         "about_content": """
-        ### About the System
         
         This application uses advanced computer vision techniques to help you learn Sign Language (ASL and ISL) by providing live feedback on your signing.
         
         **How it works:**
-        1. Select a sign to learn.
-        2. Watch the instructions.
-        3. Perform the sign in front of your camera.
-        4. The system analyzes your hand movements and provides feedback.
+        1. Select the desired language and category.
+        2. Select a sign to learn.
+        3. Watch the instructions.
+        4. Perform the sign in front of your camera.
+        5. The system analyzes your hand movements and provides feedback - the color of the frame of the video ranges from red to green according to how close you are to signing correctly.
+        
+        **Available Modes:**
+        - **Learning:** you must successfully sign the selected sign 3 times in order to learn it and move on to the next sign.
+        - **Quiz:** the system will randomly select a sign from the category for you to attempt.
+        - **Fingerspelling Practice:** practice fingerspelling a word of your choice.
         
         **Limitations:**
         Please note that this is an AI-based system and mistakes are possible. 
@@ -66,7 +99,7 @@ STRINGS = {
     },
     "he": {
         "welcome": "ברוכים הבאים ל-AI-SL",
-        "subtitle": "לומדים ASL ו-ISL עם בינה מלאכותית!",
+        "subtitle": "לומדים שפת הסימנים עם בינה מלאכותית!",
         "login": "התחברות",
         "signup": "הרשמה",
         "guest": "אורח",
@@ -100,16 +133,50 @@ STRINGS = {
         "success_msg": "כל הכבוד!",
         "instructions_placeholder": "הוראות לסימן: {}",
         "simulate_success": "הדמה הצלחה",
+        "saved_menu_button": "סימנים שמורים",
+        "want_more_button": "רוצים עוד?",
+        "quiz_me_button": "בחן אותי!",
+        "start_learning_subheader": "בואו נתחיל",
+        "select_sign_msg1": "יש לבחור סימן מהרשימה",
+        "select_sign_msg2": "כדי להתחיל ללמוד",
+        "instructions_subheader": "הוראות",
+        "instructions_message1": "יש לבחור סימן כדי לצפות בהוראות",
+        "hide_inst_button": "להסתיר",
+        "show_inst_button": "להראות",
+        "inst_hidden_msg": "הוראות מוסתרות",
+        "current_target_subheader": "אות נוכחית",
+        "how_to_sign_msg": "איך לסמן",
+        "hint_subheader": "הוראות",
+        "new_word_button": "עצור / מילה חדשה",
+        "sign_this_subheader": "יש לסמן את הסימן",
+        "save_for_later_button": "שמור לאחר כך",
+        "skip_button": "דלג",
+        "need_help_subheader": "צריכים עזרה",
+        "i_dont_remember_button": "תעזור לי",
+        "saved_signs_header": "סימנים שמורים",
+        "no_saved_sign_msg": "טרם נשמרו סימנים.",
+        "requests_header": "בקשות ומשוב",
+        "requests_msg": "רוצים שנוסיף סימן? משחק חדש? ספרו לנו!",
+        "enter_request_msg": "אנא כתבו את בקשתכם",
+        "submit_button": "שלח",
+        "submitted_msg": "בקשה נשלחה! תודה רבה.",
+        "enter_text_msg": "נא לכתוב משהו בתיבת הטקסט.",
         "about_content": """
         ### אודות המערכת
         
-        אפליקציה זו משתמשת בטכנולוגיות ראייה ממוחשבת מתקדמות כדי לעזור לך ללמוד שפת סימנים (ASL ו-ISL) על ידי מתן משוב חי.
+        אפליקציה זו משתמשת בטכנולוגיות ראייה ממוחשבת מתקדמות כדי לעזור לך ללמוד את שפות הסימנים הישראלית והאמריקאית על ידי מתן משוב חי.
         
         **איך זה עובד:**
-        1. בחר סימן ללימוד.
-        2. צפה בהוראות.
-        3. בצע את הסימן מול המצלמה.
-        4. המערכת מנתחת את תנועות הידיים ומספקת משוב.
+        1. בחר שפה וקטגוריה אותה תרצה ללמוד.
+        2. בחר סימן ללימוד.
+        3. צפה בהוראות.
+        4. בצע את הסימן מול המצלמה.
+        5. המערכת מנתחת את תנועות הידיים ומספקת משוב - צבע המסגרת של הוידאו משתנה בין אדום לירוק בהתאם לכמה אתה קרוב לבצע את הסימון בצורה נכונה.
+        
+        **מצבים אפשריים**
+        - **למידה:** עליך להצליח לסמן נכונה את הסימן הנבחר 3 פעמים כדי ללמוד אותו ולעבור ליסמן הבא.
+        - **בוחן:** המערכת תבקש ממך לבצע סימן רנדומלי מתוך הקטגוריה.
+        - **אימון איות:** מקום להתאמן בו על איות של מילה לבחירתך.
         
         **מגבלות:**
         שים לב כי זוהי מערכת מבוססת בינה מלאכותית וייתכנו טעויות.
