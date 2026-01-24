@@ -5,7 +5,7 @@ SIGNS_DB = {
     "ABC": [], # Populated dynamically below
     "Basics": ["Hello", "Goodbye", "Thank You", "Please", "Yes", "No", "Sorry", "I Love You"],
     "Questions": ["Who", "What", "When", "Where", "Why", "How"],
-    "Animals": ["Dog", "Cat", "Horse", "Bird", "Fish"]
+    "Animals": ["Dog", "Cat", "Horse", "Bird", "Fish", "Elephant", "Giraffe"]
 }
 
 # Full alphabets
